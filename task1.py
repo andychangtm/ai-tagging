@@ -1,11 +1,13 @@
 import base64
-import requests
 import os
+import csv
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-IMAGE_PATH = "beach.jpg"
+
+IMAGE_FOLDER = "imports"
 API_KEY = os.getenv('api_key')
 API_URL = "https://api.openai.com/v1/chat/completions"
 MODEL = "gpt-4o-mini"
@@ -47,9 +49,28 @@ def get_response_from_api(encoded_image):
     return response.json()
 
 
+def process_images(image_folder):
+    results = []
+    print("Processing images...")
+    for filename in os.listdir(image_folder):
+        if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+            image_path = os.path.join(image_folder, filename)
+            encoded_image = encode_image_to_base64(image_path)
+            response_dict = get_response_from_api(encoded_image)
+            message_content = response_dict["choices"][0]["message"]["content"]
+            results.append((filename, message_content))
+    return results
+
+
+def save_to_csv(results, output_file):
+    print("Saving generated alt text to csv")
+    with open(output_file, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Filename", "Alt Text"])
+        writer.writerows(results)
+
+
 if __name__ == "__main__":
-    encoded_image = encode_image_to_base64(IMAGE_PATH)
-    response_dict = get_response_from_api(encoded_image)
-    message_content = response_dict["choices"][0]["message"]["content"]
-    print("Response Message:")
-    print(message_content)
+    results = process_images(IMAGE_FOLDER)
+    save_to_csv(results, "output.csv")
+    print("Image alt texts saved to output.csv")
