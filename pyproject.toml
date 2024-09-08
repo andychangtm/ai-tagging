@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "chatgpt-alt-text-generator"
+version = "0.1.0"
+description = ""
+authors = ["Andy Chang <andy.chang@tourismmedia.com.au>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+chatgpt = "^2.2212.0"
+requests = "^2.32.3"
+setuptools = "^74.1.1"
+python-dotenv = "^1.0.1"
+openai = "^1.43.0"
+pillow = "^10.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
